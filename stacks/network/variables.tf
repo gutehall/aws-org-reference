@@ -4,7 +4,13 @@ variable "home_region" {
 }
 
 variable "network_account_id" {
-  type = string
+  description = "Required 12-digit network account id. Do not apply this stack without a network account in the client list."
+  type        = string
+
+  validation {
+    condition     = can(regex("^[0-9]{12}$", var.network_account_id))
+    error_message = "network_account_id must be a 12-digit AWS account id. Skip this stack when the account list has no network role."
+  }
 }
 
 variable "workload_account_ids" {

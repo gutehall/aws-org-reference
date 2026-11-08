@@ -8,6 +8,11 @@ variable "home_region" {
   default = "eu-north-1"
 }
 
+variable "name_prefix" {
+  type    = string
+  default = "aws-org-reference"
+}
+
 variable "tags" {
   type    = map(string)
   default = {}

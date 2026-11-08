@@ -31,7 +31,9 @@ come from the organization stack after create.
 
 - Organization CloudTrail destination: bucket in the log-archive account, and CloudWatch Logs.
 - Config history: Config recorder in the log-archive account delivering to that bucket.
-- GuardDuty delegated administrator: the security account.
+- GuardDuty delegated administrator: the security account. Findings export to
+  an S3 bucket in that account and to an EventBridge rule (`GuardDuty Finding`)
+  on the security account default bus.
 - Break-glass: EventBridge + metric filter → SNS to the email in tfvars (confirm subscription). Security account may subscribe to the same SNS topic. Delete exception uses the shared break-glass principals from identity (IAM `BreakGlass` role + `AWSReservedSSO_BreakGlass_*`).
 
 ## Guardrails (plain language)

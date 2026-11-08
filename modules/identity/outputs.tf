@@ -41,7 +41,7 @@ output "break_glass_permission_set_name" {
 
 output "break_glass_role_arn" {
   description = "Stable IAM BreakGlass role ARN in the management account."
-  value       = aws_iam_role.break_glass.arn
+  value       = local.break_glass_role_arn
 }
 
 output "break_glass_allowed_principal_arns" {

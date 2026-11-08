@@ -1,0 +1,35 @@
+# Accepted exceptions for this landing-zone reference. Prefer fixing findings;
+# only skip when the control does not apply or is accepted with a comment.
+compact: true
+framework:
+  - terraform
+directory:
+  - modules
+  - stacks
+  - bootstrap
+  - examples
+skip-check:
+  # Single-NAT egress is an accepted cost SPOF (documented in network README).
+  - CKV_AWS_130
+  # DynamoDB lock table: PAY_PER_REQUEST is intentional for low-traffic state locking.
+  - CKV_AWS_119
+  # Bootstrap/OIDC and break-glass intentionally use AdministratorAccess under
+  # a permissions boundary / emergency model (DM3-723, break-glass design).
+  - CKV_AWS_40
+  - CKV_AWS_62
+  - CKV_AWS_274
+  # Org trail / evidence buckets: versioning + TLS + public block are set;
+  # access logging / Object Lock / CMK on trail deferred.
+  - CKV_AWS_18
+  - CKV_AWS_21
+  - CKV_AWS_144
+  - CKV_AWS_145
+  - CKV2_AWS_6
+  # CloudTrail: S3 + CloudWatch Logs; SNS topic and CMK on trail deferred.
+  - CKV_AWS_252
+  - CKV_AWS_35
+  # CW Logs KMS: default encryption accepted for trail log group (retention 365).
+  - CKV_AWS_158
+  # TGW auto-accept is required for cross-account workload attachments (DM3-718).
+  - CKV_AWS_331
+soft-fail: false

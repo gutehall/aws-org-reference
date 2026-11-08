@@ -3,13 +3,15 @@
 # the IAM role covers API/CLI emergency use with a fixed ARN.
 
 locals {
-  break_glass_permission_set_name = aws_ssoadmin_permission_set.break_glass.name
+  break_glass_permission_set_name = "BreakGlass"
+  # Stable ARN from the fixed role name (known at plan time).
+  break_glass_role_arn = "arn:aws:iam::${var.management_account_id}:role/BreakGlass"
 
   # Identity Center provisions roles under this path/name prefix in the target account.
   break_glass_sso_role_arn_pattern = "arn:aws:iam::${var.management_account_id}:role/aws-reserved/sso.amazonaws.com/*/AWSReservedSSO_${local.break_glass_permission_set_name}_*"
 
   break_glass_allowed_principal_arns = [
-    aws_iam_role.break_glass.arn,
+    local.break_glass_role_arn,
     local.break_glass_sso_role_arn_pattern,
   ]
 }

@@ -3,7 +3,7 @@
 
 resource "aws_cloudwatch_log_group" "trail" {
   name              = "/aws-org-reference/${var.name_prefix}/cloudtrail"
-  retention_in_days = 90
+  retention_in_days = 365
   tags              = local.tags
 }
 

@@ -1,0 +1,35 @@
+home_region          = "eu-north-1"
+management_account_id = "111111111111"
+region_allow_list    = ["eu-north-1"]
+budget_threshold_usd = 100
+alert_email          = "ops@example.com"
+
+groups = {
+  administrators      = "Administrators"
+  security_auditors   = "SecurityAuditors"
+  network_admins      = "NetworkAdmins"
+  workload_developers = "WorkloadDevelopers"
+  break_glass         = "BreakGlass"
+}
+
+# Fake emails only. No real account ids.
+accounts = [
+  {
+    name  = "log-archive"
+    email = "aws-log-archive@example.com"
+    role  = "log-archive"
+    ou    = "Security"
+  },
+  {
+    name  = "security"
+    email = "aws-security@example.com"
+    role  = "security"
+    ou    = "Security"
+  },
+  {
+    name  = "workload-dev"
+    email = "aws-workload-dev@example.com"
+    role  = "workload"
+    ou    = "Workloads"
+  },
+]

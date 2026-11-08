@@ -5,7 +5,8 @@ locals {
 data "aws_caller_identity" "current" {}
 
 resource "aws_sns_topic" "break_glass" {
-  name = "${var.name_prefix}-break-glass"
+  name              = "${var.name_prefix}-break-glass"
+  kms_master_key_id = "alias/aws/sns"
   tags = merge(var.tags, {
     SecurityAccountId = var.security_account_id
   })

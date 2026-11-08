@@ -1,6 +1,5 @@
 # examples
 
-Public shape of client inputs. Uses fake emails and no account ids.
-
-Copy `terraform.tfvars.example` into a private directory under `clients/` and
-replace the placeholders before any apply.
+- `terraform.tfvars.example` — public shape of client inputs (fake emails).
+- `client/` — runnable root: `terraform init -backend=false && terraform validate`
+  with the example tfvars. Wires the organization module and previews later-stack inputs.
