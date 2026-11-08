@@ -1,0 +1,73 @@
+name: terraform
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+# Module CI validates and plans only. It never assumes the client Terraform
+# role and never runs terraform apply.
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: "1.10.5"
+          terraform_wrapper: false
+
+      - name: fmt
+        run: terraform fmt -check -recursive
+
+      - name: init bootstrap
+        run: terraform -chdir=bootstrap init -backend=false
+
+      - name: validate bootstrap
+        run: terraform -chdir=bootstrap validate
+
+      - name: init organization stack
+        run: terraform -chdir=stacks/organization init -backend=false
+
+      - name: validate organization stack
+        run: terraform -chdir=stacks/organization validate
+
+      - name: init logging stack
+        run: terraform -chdir=stacks/logging init -backend=false
+
+      - name: validate logging stack
+        run: terraform -chdir=stacks/logging validate
+
+      - name: init identity stack
+        run: terraform -chdir=stacks/identity init -backend=false
+
+      - name: validate identity stack
+        run: terraform -chdir=stacks/identity validate
+
+      - name: init guardduty stack
+        run: terraform -chdir=stacks/guardduty init -backend=false
+
+      - name: validate guardduty stack
+        run: terraform -chdir=stacks/guardduty validate
+
+      - name: init network stack
+        run: terraform -chdir=stacks/network init -backend=false
+
+      - name: validate network stack
+        run: terraform -chdir=stacks/network validate
+
+      - name: init budget stack
+        run: terraform -chdir=stacks/budget init -backend=false
+
+      - name: validate budget stack
+        run: terraform -chdir=stacks/budget validate
+
+      - name: account-list plans and SCP checks
+        run: terraform -chdir=stacks/organization test
+
+      - name: log bucket policy checks
+        run: terraform -chdir=stacks/logging test

@@ -1,0 +1,61 @@
+# Public example only. Fake emails. No account ids.
+# Copy to clients/<name>/terraform.tfvars and fill in real values.
+# Real *.tfvars files are gitignored.
+
+home_region = "eu-north-1"
+
+# Regions SCPs allow. us-east-1 is the documented global-service exception
+# when AWS still requires it; keep it listed only if you need that exception.
+region_allow_list = [
+  "eu-north-1",
+]
+
+# Budget alarm threshold (USD). Monthly floor is GuardDuty, CloudTrail
+# storage, and the accounts in this list.
+budget_threshold_usd = 100
+
+# Break-glass and budget notifications go here unless overridden below.
+alert_email = "ops@example.com"
+# budget_email = "finance@example.com"
+
+# Identity Center groups → permission sets (group display names).
+groups = {
+  administrators     = "Administrators"
+  security_auditors  = "SecurityAuditors"
+  network_admins     = "NetworkAdmins"
+  workload_developers = "WorkloadDevelopers"
+  break_glass        = "BreakGlass"
+}
+
+# Member accounts created by the organization stack.
+# The management account already exists and is not in this list.
+# Exactly one log-archive and exactly one security. Zero or more workload.
+# A network account is optional and only used by the separate network apply.
+accounts = [
+  {
+    name  = "log-archive"
+    email = "aws-log-archive@example.com"
+    role  = "log-archive"
+    ou    = "Security"
+  },
+  {
+    name  = "security"
+    email = "aws-security@example.com"
+    role  = "security"
+    ou    = "Security"
+  },
+  # Optional — uncomment when the client wants a shared network account.
+  # {
+  #   name  = "network"
+  #   email = "aws-network@example.com"
+  #   role  = "network"
+  #   ou    = "Infrastructure"
+  # },
+  # Optional workload accounts — zero is valid.
+  # {
+  #   name  = "workload-dev"
+  #   email = "aws-workload-dev@example.com"
+  #   role  = "workload"
+  #   ou    = "Workloads"
+  # },
+]

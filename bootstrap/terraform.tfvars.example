@@ -1,0 +1,5 @@
+home_region       = "eu-north-1"
+name_prefix       = "acme-org"
+# Repository that will apply this client — not the shared modules repo CI.
+github_repository = "acme-corp/aws-org-client"
+github_branch     = "refs/heads/main"

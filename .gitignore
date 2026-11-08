@@ -1,0 +1,25 @@
+# Local Terraform state (lock files for root stacks are committed)
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+crash.*.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Real client values — never commit emails, account ids, or group names
+*.tfvars
+!*.tfvars.example
+
+# Private per-client directories (keep only the README in git)
+clients/**
+!clients/README.md
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~
