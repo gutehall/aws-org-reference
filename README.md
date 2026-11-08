@@ -1,7 +1,7 @@
 # aws-org-reference
 
-**Status:** private alpha reference toward **v0.1.0**. Not a Control Tower
-replacement. End-to-end apply is not yet proven in a throwaway org — see
+**Status:** **v0.1.0** private alpha reference. Not a Control Tower replacement.
+End-to-end apply is not yet proven in a throwaway org — see
 [`docs/dry-run.md`](docs/dry-run.md).
 
 Baseline Terraform you apply to land a client AWS organization from a private
