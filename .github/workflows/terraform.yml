@@ -18,7 +18,8 @@ jobs:
 
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: "1.10.5"
+          # 1.12+ required for override_during in terraform test
+          terraform_version: "1.12.2"
           terraform_wrapper: false
 
       - name: fmt
