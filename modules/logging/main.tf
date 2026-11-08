@@ -149,7 +149,32 @@ resource "aws_s3_bucket_ownership_controls" "trail" {
   bucket   = aws_s3_bucket.trail.id
 
   rule {
-    object_ownership = "BucketOwnerPreferred"
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "trail" {
+  provider = aws.log_archive
+  bucket   = aws_s3_bucket.trail.id
+
+  rule {
+    id     = "retain-evidence"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    transition {
+      days          = 90
+      storage_class = "STANDARD_IA"
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 365
+    }
   }
 }
 

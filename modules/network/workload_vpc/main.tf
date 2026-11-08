@@ -19,6 +19,12 @@ resource "aws_vpc" "this" {
   tags                 = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  # Restrict all traffic on the default SG (Checkov CKV2_AWS_12).
+}
+
 resource "aws_subnet" "private" {
   count = local.az_count
 

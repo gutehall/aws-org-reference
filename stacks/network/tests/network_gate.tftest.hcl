@@ -47,3 +47,5 @@ run "rejects_non_account_id" {
     workload_vpcs          = []
   }
 }
+
+# Validation-only runs above; flow_logs_bucket_arn is wired through for apply paths.

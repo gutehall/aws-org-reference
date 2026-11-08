@@ -69,6 +69,15 @@ resource "aws_s3_bucket_public_access_block" "findings" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_ownership_controls" "findings" {
+  provider = aws.security
+  bucket   = aws_s3_bucket.findings.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
 resource "aws_s3_bucket_server_side_encryption_configuration" "findings" {
   provider = aws.security
   bucket   = aws_s3_bucket.findings.id
@@ -77,6 +86,31 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "findings" {
     apply_server_side_encryption_by_default {
       sse_algorithm     = "aws:kms"
       kms_master_key_id = aws_kms_key.findings.arn
+    }
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "findings" {
+  provider = aws.security
+  bucket   = aws_s3_bucket.findings.id
+
+  rule {
+    id     = "retain-findings"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    transition {
+      days          = 90
+      storage_class = "STANDARD_IA"
+    }
+
+    expiration {
+      days = 365
     }
   }
 }

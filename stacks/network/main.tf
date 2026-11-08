@@ -72,6 +72,7 @@ module "network" {
   network_account_id     = var.network_account_id
   workload_account_ids   = var.workload_account_ids
   log_archive_account_id = var.log_archive_account_id
+  flow_logs_bucket_arn   = var.flow_logs_bucket_arn
   availability_zones     = var.availability_zones
   egress_vpc_cidr        = var.egress_vpc_cidr
   name_prefix            = var.name_prefix

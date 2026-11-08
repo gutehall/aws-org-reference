@@ -52,6 +52,33 @@ resource "aws_s3_bucket_public_access_block" "state" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_ownership_controls" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    id     = "expire-old-versions"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+  }
+}
+
 resource "aws_s3_bucket_policy" "state" {
   bucket = aws_s3_bucket.state.id
 
@@ -85,6 +112,10 @@ resource "aws_dynamodb_table" "lock" {
   attribute {
     name = "LockID"
     type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 
   tags = local.tags

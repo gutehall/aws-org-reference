@@ -18,6 +18,15 @@ skip-check:
   - CKV_AWS_40
   - CKV_AWS_62
   - CKV_AWS_274
+  # Permissions boundary intentionally Allow* then Deny footguns (DM3-723).
+  - CKV_AWS_63
+  - CKV_AWS_286
+  - CKV_AWS_287
+  - CKV_AWS_288
+  - CKV_AWS_289
+  - CKV_AWS_290
+  - CKV_AWS_355
+  - CKV2_AWS_40
   # Org trail / evidence buckets: versioning + TLS + public block are set;
   # access logging / Object Lock / CMK on trail deferred.
   - CKV_AWS_18
@@ -25,6 +34,8 @@ skip-check:
   - CKV_AWS_144
   - CKV_AWS_145
   - CKV2_AWS_6
+  # S3 event notifications not required for state/trail/findings buckets.
+  - CKV2_AWS_62
   # CloudTrail: S3 + CloudWatch Logs; SNS topic and CMK on trail deferred.
   - CKV_AWS_252
   - CKV_AWS_35

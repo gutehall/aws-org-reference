@@ -23,6 +23,24 @@ resource "aws_vpc" "egress" {
   tags                 = merge(local.tags, { Name = "${var.name_prefix}-egress" })
 }
 
+resource "aws_default_security_group" "egress" {
+  provider = aws.network
+  vpc_id   = aws_vpc.egress.id
+
+  # Restrict all traffic on the default SG (Checkov CKV2_AWS_12).
+}
+
+resource "aws_flow_log" "egress" {
+  count = var.flow_logs_bucket_arn == null ? 0 : 1
+
+  provider             = aws.network
+  vpc_id               = aws_vpc.egress.id
+  traffic_type         = "ALL"
+  log_destination_type = "s3"
+  log_destination      = var.flow_logs_bucket_arn
+  tags                 = local.tags
+}
+
 resource "aws_subnet" "egress_public" {
   provider = aws.network
   count    = local.az_count
