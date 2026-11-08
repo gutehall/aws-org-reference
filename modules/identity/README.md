@@ -12,3 +12,10 @@ names come from the private client tfvars.
 | NetworkAdmin | network account only, when present |
 | WorkloadDeveloper | every workload account; no AdministratorAccess, IAM, or network changes |
 | BreakGlass | Management only |
+
+Break-glass principals (shared with logging delete exception and the alarm):
+
+- IAM role `BreakGlass` in the management account (stable ARN)
+- SSO role pattern `AWSReservedSSO_BreakGlass_*` in the management account
+
+Pass `break_glass_allowed_principal_arns` into the logging stack.

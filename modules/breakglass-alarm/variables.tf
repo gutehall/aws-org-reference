@@ -4,8 +4,14 @@ variable "home_region" {
 }
 
 variable "alert_email" {
-  description = "Email from tfvars that receives break-glass use alarms."
+  description = "Email from tfvars that receives break-glass use alarms. Confirm the SNS subscription after apply."
   type        = string
+}
+
+variable "security_alert_email" {
+  description = "Optional second email (security team). Defaults to alert_email."
+  type        = string
+  default     = null
 }
 
 variable "break_glass_permission_set_arn" {
@@ -13,8 +19,13 @@ variable "break_glass_permission_set_arn" {
   type        = string
 }
 
+variable "cloudtrail_log_group_name" {
+  description = "Organization trail CloudWatch Logs group from the logging stack."
+  type        = string
+}
+
 variable "security_account_id" {
-  description = "Security account — alarm is visible from here via SNS subscription mirror."
+  description = "Security account — may subscribe to the SNS topic."
   type        = string
 }
 

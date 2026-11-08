@@ -15,3 +15,16 @@ output "trail_bucket_policy_json" {
 output "cloudtrail_arn" {
   value = aws_cloudtrail.organization.arn
 }
+
+output "cloudtrail_log_group_name" {
+  description = "CloudWatch Logs group receiving organization trail events (for break-glass detection)."
+  value       = aws_cloudwatch_log_group.trail.name
+}
+
+output "cloudtrail_log_group_arn" {
+  value = aws_cloudwatch_log_group.trail.arn
+}
+
+output "config_recorder_name" {
+  value = aws_config_configuration_recorder.log_archive.name
+}

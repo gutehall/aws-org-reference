@@ -40,3 +40,9 @@ AWS consultants applying into a client's existing management account.
 ## Deferred
 
 Control Tower, account vending, IPAM, Network Firewall, second region, sample app.
+
+## Follow-up
+
+Scaffold landed; gaps tracked in Linear project **aws-org-reference · Make landing work**
+(DM3-714+): org integrations, break-glass that fires, Config for real, finished network,
+hardening, CI breadth.

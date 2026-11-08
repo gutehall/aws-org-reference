@@ -1,4 +1,14 @@
-data "aws_organizations_organization" "this" {}
+# Manage the existing organization in-place (import on first apply).
+# Enables SCP policy type and trusted access so other stacks do not need console clicks.
+resource "aws_organizations_organization" "this" {
+  aws_service_access_principals = var.aws_service_access_principals
+  enabled_policy_types          = ["SERVICE_CONTROL_POLICY"]
+  feature_set                   = "ALL"
+
+  lifecycle {
+    prevent_destroy = true
+  }
+}
 
 locals {
   ou_names = toset([for a in var.accounts : a.ou])
@@ -7,7 +17,7 @@ locals {
     for a in var.accounts : a.name => a
   }
 
-  root_id = data.aws_organizations_organization.this.roots[0].id
+  root_id = aws_organizations_organization.this.roots[0].id
 }
 
 resource "aws_organizations_organizational_unit" "this" {

@@ -1,3 +1,24 @@
+output "organization_id" {
+  description = "AWS Organizations id."
+  value       = aws_organizations_organization.this.id
+}
+
+output "organization_arn" {
+  value = aws_organizations_organization.this.arn
+}
+
+output "roots" {
+  value = aws_organizations_organization.this.roots
+}
+
+output "enabled_policy_types" {
+  value = aws_organizations_organization.this.enabled_policy_types
+}
+
+output "aws_service_access_principals" {
+  value = aws_organizations_organization.this.aws_service_access_principals
+}
+
 output "account_ids" {
   description = "Map of account name → id for every list entry."
   value = {

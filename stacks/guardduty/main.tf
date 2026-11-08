@@ -21,5 +21,6 @@ module "guardduty" {
 
   security_account_id = var.security_account_id
   home_region         = var.home_region
+  name_prefix         = var.name_prefix
   tags                = var.tags
 }

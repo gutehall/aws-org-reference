@@ -31,6 +31,8 @@ modules never contain them.
 
 ## Quick start
 
+See **`docs/apply-order.md`** for the full sequence and prerequisites.
+
 1. Copy `examples/terraform.tfvars.example` into a private client directory:
 
    ```sh
@@ -39,13 +41,18 @@ modules never contain them.
    ```
 
 2. Edit the client file: account list, region allow list, group assignments,
-   and budget threshold.
+   and budget threshold. Pre-create the Identity Center groups named there.
 
 3. Apply `bootstrap/` once from an administrator session in the management
    account. Later applies can use GitHub OIDC for that client repository.
 
-4. Apply the organization, identity, and logging stacks. Apply the network
-   stack only when the account list includes a `network` role.
+4. Apply `stacks/organization` (import the existing org on first apply — see
+   apply-order). Then identity → logging → GuardDuty → budget → break-glass.
+   Confirm the SNS email subscription. Apply network only when the list has a
+   `network` role.
+
+5. Wire later stacks from org/identity/logging outputs (see
+   `stacks/remote_state.tf.example`).
 
 ## License
 

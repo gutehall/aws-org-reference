@@ -7,7 +7,16 @@ variable "alert_email" {
   type = string
 }
 
+variable "security_alert_email" {
+  type    = string
+  default = null
+}
+
 variable "break_glass_permission_set_arn" {
+  type = string
+}
+
+variable "cloudtrail_log_group_name" {
   type = string
 }
 

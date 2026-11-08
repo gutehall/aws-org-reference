@@ -1,3 +1,14 @@
+variable "aws_service_access_principals" {
+  description = "AWS service principals granted trusted access on the organization."
+  type        = list(string)
+  default = [
+    "cloudtrail.amazonaws.com",
+    "config.amazonaws.com",
+    "guardduty.amazonaws.com",
+    "ram.amazonaws.com",
+  ]
+}
+
 variable "accounts" {
   description = "Member accounts to create. Exactly one log-archive and one security. Management is not included."
   type = list(object({

@@ -52,6 +52,58 @@ resource "aws_s3_bucket_public_access_block" "state" {
   restrict_public_buckets = true
 }
 
+resource "aws_s3_bucket_ownership_controls" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    object_ownership = "BucketOwnerEnforced"
+  }
+}
+
+resource "aws_s3_bucket_lifecycle_configuration" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  rule {
+    id     = "expire-old-versions"
+    status = "Enabled"
+
+    filter {}
+
+    abort_incomplete_multipart_upload {
+      days_after_initiation = 7
+    }
+
+    noncurrent_version_expiration {
+      noncurrent_days = 90
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "state" {
+  bucket = aws_s3_bucket.state.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid       = "DenyInsecureTransport"
+        Effect    = "Deny"
+        Principal = "*"
+        Action    = "s3:*"
+        Resource = [
+          aws_s3_bucket.state.arn,
+          "${aws_s3_bucket.state.arn}/*",
+        ]
+        Condition = {
+          Bool = {
+            "aws:SecureTransport" = "false"
+          }
+        }
+      },
+    ]
+  })
+}
+
 resource "aws_dynamodb_table" "lock" {
   name         = "${var.name_prefix}-tflock"
   billing_mode = "PAY_PER_REQUEST"
@@ -60,6 +112,10 @@ resource "aws_dynamodb_table" "lock" {
   attribute {
     name = "LockID"
     type = "S"
+  }
+
+  point_in_time_recovery {
+    enabled = true
   }
 
   tags = local.tags
@@ -98,15 +154,48 @@ data "aws_iam_policy_document" "terraform_assume" {
   }
 }
 
-resource "aws_iam_role" "terraform" {
-  name               = "${var.name_prefix}-terraform"
-  assume_role_policy = data.aws_iam_policy_document.terraform_assume.json
+# Permissions boundary: still allows landing applies, but blocks the worst footguns.
+resource "aws_iam_policy" "terraform_boundary" {
+  name = "${var.name_prefix}-terraform-boundary"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "AllowLanding"
+        Effect   = "Allow"
+        Action   = "*"
+        Resource = "*"
+      },
+      {
+        Sid    = "DenyBoundaryEscapes"
+        Effect = "Deny"
+        Action = [
+          "iam:CreateUser",
+          "iam:CreateAccessKey",
+          "iam:DeleteRolePermissionsBoundary",
+          "iam:DeleteUserPermissionsBoundary",
+          "organizations:LeaveOrganization",
+          "account:CloseAccount",
+        ]
+        Resource = "*"
+      },
+    ]
+  })
 
   tags = local.tags
 }
 
-# Broad enough for org landing applies from the management account.
-# Narrow further per client if required; never use static access keys.
+resource "aws_iam_role" "terraform" {
+  name                 = "${var.name_prefix}-terraform"
+  assume_role_policy   = data.aws_iam_policy_document.terraform_assume.json
+  permissions_boundary = aws_iam_policy.terraform_boundary.arn
+
+  tags = local.tags
+}
+
+# Broad enough for org landing applies; constrained by the permissions boundary.
+# Never use static access keys. Module CI must not assume this role.
 resource "aws_iam_role_policy_attachment" "terraform_admin" {
   role       = aws_iam_role.terraform.name
   policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"

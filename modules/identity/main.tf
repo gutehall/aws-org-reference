@@ -184,29 +184,34 @@ resource "aws_ssoadmin_permission_set_inline_policy" "workload_developer_deny" {
         Action = [
           "ec2:CreateVpc",
           "ec2:DeleteVpc",
+          "ec2:ModifyVpc*",
           "ec2:CreateSubnet",
           "ec2:DeleteSubnet",
+          "ec2:ModifySubnetAttribute",
+          "ec2:CreateRoute",
+          "ec2:DeleteRoute",
+          "ec2:ReplaceRoute",
+          "ec2:CreateRouteTable",
+          "ec2:DeleteRouteTable",
+          "ec2:AssociateRouteTable",
+          "ec2:DisassociateRouteTable",
           "ec2:CreateInternetGateway",
           "ec2:AttachInternetGateway",
+          "ec2:DetachInternetGateway",
+          "ec2:DeleteInternetGateway",
           "ec2:CreateNatGateway",
-          "ec2:CreateTransitGateway",
-          "ec2:ModifyTransitGateway",
-          "ec2:CreateTransitGatewayVpcAttachment",
+          "ec2:DeleteNatGateway",
+          "ec2:AuthorizeSecurityGroup*",
+          "ec2:RevokeSecurityGroup*",
+          "ec2:CreateSecurityGroup",
+          "ec2:DeleteSecurityGroup",
+          "ec2:CreateTransitGateway*",
           "ec2:DeleteTransitGateway*",
+          "ec2:ModifyTransitGateway*",
+          "ec2:AcceptTransitGateway*",
           "ram:*",
         ]
         Resource = "*"
-      },
-      {
-        Sid      = "DenyAdministratorAccess"
-        Effect   = "Deny"
-        Action   = ["*"]
-        Resource = "*"
-        Condition = {
-          ArnEquals = {
-            "iam:PolicyArn" = "arn:aws:iam::aws:policy/AdministratorAccess"
-          }
-        }
       },
     ]
   })

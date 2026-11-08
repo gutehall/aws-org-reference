@@ -19,6 +19,12 @@ variable "log_archive_account_id" {
   type        = string
 }
 
+variable "flow_logs_bucket_arn" {
+  description = "S3 ARN for egress VPC flow logs (usually the log-archive trail bucket)."
+  type        = string
+  default     = null
+}
+
 variable "availability_zones" {
   description = "AZs for the egress VPC and workload private subnets."
   type        = list(string)

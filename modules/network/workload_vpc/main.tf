@@ -19,6 +19,12 @@ resource "aws_vpc" "this" {
   tags                 = merge(local.tags, { Name = var.name })
 }
 
+resource "aws_default_security_group" "this" {
+  vpc_id = aws_vpc.this.id
+
+  # Restrict all traffic on the default SG (Checkov CKV2_AWS_12).
+}
+
 resource "aws_subnet" "private" {
   count = local.az_count
 
@@ -54,7 +60,7 @@ resource "aws_route_table_association" "private" {
 
 resource "aws_vpc_endpoint" "s3" {
   vpc_id            = aws_vpc.this.id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.s3"
+  service_name      = "com.amazonaws.${data.aws_region.current.region}.s3"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.private.id]
   tags              = local.tags
@@ -62,7 +68,7 @@ resource "aws_vpc_endpoint" "s3" {
 
 resource "aws_vpc_endpoint" "dynamodb" {
   vpc_id            = aws_vpc.this.id
-  service_name      = "com.amazonaws.${data.aws_region.current.name}.dynamodb"
+  service_name      = "com.amazonaws.${data.aws_region.current.region}.dynamodb"
   vpc_endpoint_type = "Gateway"
   route_table_ids   = [aws_route_table.private.id]
   tags              = local.tags
@@ -72,11 +78,12 @@ data "aws_region" "current" {}
 
 resource "aws_security_group" "vpc_endpoints" {
   name        = "${var.name}-vpce"
-  description = "Interface endpoints"
+  description = "Interface VPC endpoints for SSM in the workload VPC"
   vpc_id      = aws_vpc.this.id
   tags        = local.tags
 
   ingress {
+    description = "HTTPS from VPC CIDR to interface endpoints"
     from_port   = 443
     to_port     = 443
     protocol    = "tcp"
@@ -84,16 +91,17 @@ resource "aws_security_group" "vpc_endpoints" {
   }
 
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    description = "HTTPS to VPC CIDR for endpoint replies"
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = [var.cidr_block]
   }
 }
 
 resource "aws_vpc_endpoint" "ssm" {
   vpc_id              = aws_vpc.this.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ssm"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.ssm"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
@@ -103,7 +111,7 @@ resource "aws_vpc_endpoint" "ssm" {
 
 resource "aws_vpc_endpoint" "ssmmessages" {
   vpc_id              = aws_vpc.this.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ssmmessages"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.ssmmessages"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
@@ -113,7 +121,7 @@ resource "aws_vpc_endpoint" "ssmmessages" {
 
 resource "aws_vpc_endpoint" "ec2messages" {
   vpc_id              = aws_vpc.this.id
-  service_name        = "com.amazonaws.${data.aws_region.current.name}.ec2messages"
+  service_name        = "com.amazonaws.${data.aws_region.current.region}.ec2messages"
   vpc_endpoint_type   = "Interface"
   subnet_ids          = aws_subnet.private[*].id
   security_group_ids  = [aws_security_group.vpc_endpoints.id]
