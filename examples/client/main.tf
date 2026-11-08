@@ -16,25 +16,29 @@ module "organization" {
   region_allow_list = var.region_allow_list
 }
 
-# Identity / logging / budget are shown as the next wiring step after org outputs
-# exist. Account ids below are placeholders until organization apply fills them
-# via remote state (see stacks/remote_state.tf.example).
+# Later stacks consume org / identity / logging via remote state
+# (remote_state.tf). Placeholders keep validate offline.
 
 output "wiring_preview" {
   description = "How later stacks consume org + client inputs (fake ids until apply)."
   value = {
-    home_region              = var.home_region
-    management_account_id    = var.management_account_id
-    alert_email              = var.alert_email
-    budget_threshold_usd     = var.budget_threshold_usd
-    groups                   = var.groups
-    identity_store_id        = var.identity_store_id
-    identity_instance_arn    = var.identity_instance_arn
-    log_archive_account_name = local.log_archive.name
-    security_account_name    = local.security.name
-    network_account_name     = try(local.network.name, null)
-    workload_account_names   = [for w in local.workloads : w.name]
-    apply_network_stack      = local.network != null
+    home_region                        = var.home_region
+    management_account_id              = var.management_account_id
+    alert_email                        = var.alert_email
+    budget_threshold_usd               = var.budget_threshold_usd
+    groups                             = var.groups
+    identity_store_id                  = var.identity_store_id
+    identity_instance_arn              = var.identity_instance_arn
+    log_archive_account_name           = local.log_archive.name
+    security_account_name              = local.security.name
+    network_account_name               = try(local.network.name, null)
+    workload_account_names             = [for w in local.workloads : w.name]
+    apply_network_stack                = local.network != null
+    log_archive_account_id             = local.wiring.log_archive_account_id
+    security_account_id                = local.wiring.security_account_id
+    break_glass_allowed_principal_arns = local.wiring.break_glass_allowed_principal_arns
+    flow_logs_bucket_arn               = local.wiring.flow_logs_bucket_arn
+    use_remote_state                   = var.use_remote_state
   }
 }
 

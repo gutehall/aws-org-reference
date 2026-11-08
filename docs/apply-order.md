@@ -11,7 +11,8 @@
 
 1. **`bootstrap/`** (admin session in management)  
    State bucket (TLS-only), lock table, GitHub OIDC role for the *client* apply
-   repo (permissions boundary applied).  
+   repo (service-scoped landing policy + permissions boundary — not
+   AdministratorAccess).  
    Module CI never assumes this role and never applies.
 
 2. **`stacks/organization`**  
@@ -27,18 +28,22 @@
    (IAM `BreakGlass` role + SSO pattern) for logging.
 
 4. **`stacks/logging`**  
-   Org trail → S3 + CloudWatch Logs; Config recorder in log-archive; bucket
-   deny-delete except break-glass principals; optional VPC flow-log allows.
+   Org trail → S3 + CloudWatch Logs; Config recorder in log-archive only (not
+   org-wide); bucket deny-delete except break-glass principals; optional VPC
+   flow-log allows.
 
 5. **`stacks/guardduty`** → **`stacks/budget`** → **`stacks/breakglass-alarm`**  
    Confirm SNS email subscriptions after the alarm stack apply. Security
    account may subscribe to the break-glass SNS topic.
 
 6. **`stacks/network`** (only if the account list has a `network` role)  
-   Agree TGW + single-NAT cost first. Wires up to four `workload_vpc` modules
-   via assume-role providers. Pass `flow_logs_bucket_arn` from logging.
+   Agree TGW + single-NAT cost first. Cap: four workload VPCs; single-AZ NAT
+   SPOF. Wires `workload_vpc` modules via assume-role providers. Pass
+   `flow_logs_bucket_arn` from logging.
 
 ## Wiring outputs
 
-Use remote state (see `stacks/remote_state.tf.example`) so later stacks consume
-org / identity / logging outputs instead of pasting account ids by hand.
+Use remote state so later stacks consume org / identity / logging outputs
+instead of pasting account ids by hand. Supported example:
+`examples/client/remote_state.tf`. Copy-paste hint for real roots:
+`stacks/remote_state.tf.example`.

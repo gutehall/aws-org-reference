@@ -1,5 +1,6 @@
 # Copy into a client root (or each stack) after organization apply.
-# Replace bucket / table / region from bootstrap outputs.
+# Replace bucket / region from bootstrap outputs.
+# A fuller offline-validate example lives in examples/client/remote_state.tf.
 
 data "terraform_remote_state" "organization" {
   backend = "s3"
@@ -10,6 +11,25 @@ data "terraform_remote_state" "organization" {
   }
 }
 
-# Example wiring into logging / identity:
+data "terraform_remote_state" "identity" {
+  backend = "s3"
+  config = {
+    bucket = "REPLACE-tfstate-ACCOUNT"
+    key    = "identity/terraform.tfstate"
+    region = "eu-north-1"
+  }
+}
+
+data "terraform_remote_state" "logging" {
+  backend = "s3"
+  config = {
+    bucket = "REPLACE-tfstate-ACCOUNT"
+    key    = "logging/terraform.tfstate"
+    region = "eu-north-1"
+  }
+}
+
+# Example wiring:
 #   log_archive_account_id = data.terraform_remote_state.organization.outputs.log_archive_account_id
 #   break_glass_allowed_principal_arns = data.terraform_remote_state.identity.outputs.break_glass_allowed_principal_arns
+#   flow_logs_bucket_arn = data.terraform_remote_state.logging.outputs.trail_bucket_arn
