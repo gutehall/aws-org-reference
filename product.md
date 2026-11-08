@@ -45,6 +45,5 @@ Control Tower, account vending, IPAM, Network Firewall, second region, sample ap
 
 ## Follow-up
 
-Scaffold and landing fixes are Done. Remaining before go-live / public alpha:
-Linear project **aws-org-reference · Go-live and public** (DM3-732+) — dry-run apply,
-OIDC least privilege, public README/docs, then tag v0.1.0.
+Scaffold and landing fixes are done. v0.1.0 is tagged. The open proof is a
+dry-run apply in a throwaway organization (`docs/dry-run.md`).
