@@ -194,9 +194,141 @@ resource "aws_iam_role" "terraform" {
   tags = local.tags
 }
 
-# Broad enough for org landing applies; constrained by the permissions boundary.
-# Never use static access keys. Module CI must not assume this role.
-resource "aws_iam_role_policy_attachment" "terraform_admin" {
+# Service-scoped landing permissions (not AdministratorAccess). Constrained
+# further by the permissions boundary. Never use static access keys.
+# Module CI must not assume this role.
+resource "aws_iam_policy" "terraform_landing" {
+  name = "${var.name_prefix}-terraform-landing"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "Organizations"
+        Effect   = "Allow"
+        Action   = ["organizations:*"]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "IdentityCenter"
+        Effect = "Allow"
+        Action = [
+          "sso:*",
+          "sso-directory:*",
+          "identitystore:*",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid      = "CloudTrail"
+        Effect   = "Allow"
+        Action   = ["cloudtrail:*"]
+        Resource = ["*"]
+      },
+      {
+        Sid      = "Config"
+        Effect   = "Allow"
+        Action   = ["config:*"]
+        Resource = ["*"]
+      },
+      {
+        Sid      = "GuardDuty"
+        Effect   = "Allow"
+        Action   = ["guardduty:*"]
+        Resource = ["*"]
+      },
+      {
+        Sid      = "Budgets"
+        Effect   = "Allow"
+        Action   = ["budgets:*"]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "LogsAndMetrics"
+        Effect = "Allow"
+        Action = [
+          "logs:*",
+          "cloudwatch:*",
+          "events:*",
+          "sns:*",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "StorageAndKeys"
+        Effect = "Allow"
+        Action = [
+          "s3:*",
+          "dynamodb:*",
+          "kms:*",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "Network"
+        Effect = "Allow"
+        Action = [
+          "ec2:*",
+          "ram:*",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid    = "IAMLanding"
+        Effect = "Allow"
+        Action = [
+          "iam:Get*",
+          "iam:List*",
+          "iam:CreateRole",
+          "iam:DeleteRole",
+          "iam:UpdateRole",
+          "iam:UpdateAssumeRolePolicy",
+          "iam:TagRole",
+          "iam:UntagRole",
+          "iam:PassRole",
+          "iam:PutRolePolicy",
+          "iam:DeleteRolePolicy",
+          "iam:GetRolePolicy",
+          "iam:AttachRolePolicy",
+          "iam:DetachRolePolicy",
+          "iam:CreatePolicy",
+          "iam:DeletePolicy",
+          "iam:CreatePolicyVersion",
+          "iam:DeletePolicyVersion",
+          "iam:GetPolicy",
+          "iam:GetPolicyVersion",
+          "iam:ListPolicyVersions",
+          "iam:TagPolicy",
+          "iam:UntagPolicy",
+          "iam:CreateOpenIDConnectProvider",
+          "iam:DeleteOpenIDConnectProvider",
+          "iam:GetOpenIDConnectProvider",
+          "iam:ListOpenIDConnectProviders",
+          "iam:TagOpenIDConnectProvider",
+          "iam:UntagOpenIDConnectProvider",
+          "iam:UpdateOpenIDConnectProviderThumbprint",
+        ]
+        Resource = ["*"]
+      },
+      {
+        Sid      = "AssumeMemberOrgAccessRole"
+        Effect   = "Allow"
+        Action   = ["sts:AssumeRole"]
+        Resource = ["arn:aws:iam::*:role/OrganizationAccountAccessRole"]
+      },
+      {
+        Sid      = "CallerIdentity"
+        Effect   = "Allow"
+        Action   = ["sts:GetCallerIdentity"]
+        Resource = ["*"]
+      },
+    ]
+  })
+
+  tags = local.tags
+}
+
+resource "aws_iam_role_policy_attachment" "terraform_landing" {
   role       = aws_iam_role.terraform.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
+  policy_arn = aws_iam_policy.terraform_landing.arn
 }

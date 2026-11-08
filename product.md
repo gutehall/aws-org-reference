@@ -36,6 +36,8 @@ AWS consultants applying into a client's existing management account.
 | Decision | Rationale | Date |
 |----------|-----------|------|
 | Account list + separate network | See `docs/decisions/001-account-list-and-network.md` | 2026-11-08 |
+| Config log-archive only (MVP) | See `docs/decisions/002-config-scope.md` | 2026-11-08 |
+| Network 4-VPC / single-AZ NAT | See `docs/decisions/003-network-limits.md` | 2026-11-08 |
 
 ## Deferred
 
@@ -43,6 +45,6 @@ Control Tower, account vending, IPAM, Network Firewall, second region, sample ap
 
 ## Follow-up
 
-Scaffold landed; gaps tracked in Linear project **aws-org-reference · Make landing work**
-(DM3-714+): org integrations, break-glass that fires, Config for real, finished network,
-hardening, CI breadth.
+Scaffold and landing fixes are Done. Remaining before go-live / public alpha:
+Linear project **aws-org-reference · Go-live and public** (DM3-732+) — dry-run apply,
+OIDC least privilege, public README/docs, then tag v0.1.0.

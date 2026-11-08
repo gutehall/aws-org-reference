@@ -30,7 +30,8 @@ come from the organization stack after create.
 ## Logging and detection
 
 - Organization CloudTrail destination: bucket in the log-archive account, and CloudWatch Logs.
-- Config history: Config recorder in the log-archive account delivering to that bucket.
+- Config history: Config recorder **in the log-archive account only** (not
+  org-wide) delivering to that bucket. See `docs/decisions/002-config-scope.md`.
 - GuardDuty delegated administrator: the security account. Findings export to
   an S3 bucket in that account and to an EventBridge rule (`GuardDuty Finding`)
   on the security account default bus.
@@ -52,7 +53,9 @@ The attached SCPs deny:
 - Budget threshold: the amount from tfvars.
 - Monthly floor: GuardDuty + CloudTrail storage + the accounts in the list.
   The network module (Transit Gateway, centralized NAT) is extra and only
-  when that separate apply runs.
+  when that separate apply runs. Network go-live limits: at most four
+  workload VPCs and a single-AZ NAT (availability SPOF). See
+  `docs/decisions/003-network-limits.md`.
 
 ## Adding an account later
 
