@@ -39,16 +39,6 @@ modules never contain them. `product.md` is maintainer-oriented.
 - A management account that already exists (this stack does not create it)
 - Identity Center enabled in the home region before identity applies
 
-## Limitations (go-live)
-
-| Topic | Constraint |
-|-------|------------|
-| Dry-run | Full apply not yet completed in a throwaway org (`docs/dry-run.md`) |
-| Network | Up to **4** workload VPCs; **single-AZ NAT** (availability SPOF for cost) — [`003`](docs/decisions/003-network-limits.md) |
-| Config | Log-archive recorder only — [`002`](docs/decisions/002-config-scope.md) |
-| OIDC role | Service-scoped landing policy + permissions boundary; not `AdministratorAccess`. Member work still uses `OrganizationAccountAccessRole` after assume-role |
-| Break-glass alerts | EventBridge / metric patterns best-effort until verified against real SSO events |
-
 ## Quick start
 
 See **`docs/apply-order.md`** for the full sequence and prerequisites.
