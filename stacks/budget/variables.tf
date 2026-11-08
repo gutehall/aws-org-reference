@@ -16,6 +16,12 @@ variable "budget_email" {
   default = null
 }
 
+variable "time_period_start" {
+  description = "Budget start YYYY-MM-DD_HH:MM (UTC). Default: first day of current month."
+  type        = string
+  default     = null
+}
+
 variable "tags" {
   type    = map(string)
   default = {}

@@ -29,10 +29,10 @@ come from the organization stack after create.
 
 ## Logging and detection
 
-- Organization CloudTrail destination: bucket in the log-archive account.
-- Config history: same log-archive account.
+- Organization CloudTrail destination: bucket in the log-archive account, and CloudWatch Logs.
+- Config history: Config recorder in the log-archive account delivering to that bucket.
 - GuardDuty delegated administrator: the security account.
-- Break-glass use alarms the email from tfvars and is visible from security.
+- Break-glass: EventBridge + metric filter → SNS to the email in tfvars (confirm subscription). Security account may subscribe to the same SNS topic. Delete exception uses the shared break-glass principals from identity (IAM `BreakGlass` role + `AWSReservedSSO_BreakGlass_*`).
 
 ## Guardrails (plain language)
 

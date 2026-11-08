@@ -66,6 +66,12 @@ jobs:
       - name: validate budget stack
         run: terraform -chdir=stacks/budget validate
 
+      - name: init breakglass-alarm stack
+        run: terraform -chdir=stacks/breakglass-alarm init -backend=false
+
+      - name: validate breakglass-alarm stack
+        run: terraform -chdir=stacks/breakglass-alarm validate
+
       - name: account-list plans and SCP checks
         run: terraform -chdir=stacks/organization test
 

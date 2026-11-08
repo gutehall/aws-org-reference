@@ -26,6 +26,21 @@ variable "accounts" {
     ]) == 1
     error_message = "The account list must contain exactly one account with role security."
   }
+
+  validation {
+    condition = alltrue([
+      for a in var.accounts :
+      contains(["log-archive", "security", "network", "workload"], a.role)
+    ])
+    error_message = "Each account role must be one of: log-archive, security, network, workload."
+  }
+
+  validation {
+    condition = length([
+      for a in var.accounts : a if a.role == "network"
+    ]) <= 1
+    error_message = "The account list may contain at most one account with role network."
+  }
 }
 
 variable "region_allow_list" {

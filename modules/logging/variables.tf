@@ -13,9 +13,26 @@ variable "management_account_id" {
   type        = string
 }
 
-variable "break_glass_role_arn" {
-  description = "Only principal allowed to s3:DeleteObject on the log bucket (break-glass)."
-  type        = string
+variable "break_glass_allowed_principal_arns" {
+  description = "Principals allowed to s3:DeleteObject on the log bucket (from identity module: IAM BreakGlass role + SSO pattern)."
+  type        = list(string)
+
+  validation {
+    condition     = length(var.break_glass_allowed_principal_arns) > 0
+    error_message = "At least one break-glass principal ARN or pattern is required."
+  }
+}
+
+variable "flow_log_source_account_ids" {
+  description = "Accounts allowed to deliver VPC flow logs to this bucket (workload + network)."
+  type        = list(string)
+  default     = []
+}
+
+variable "config_source_account_ids" {
+  description = "Extra accounts allowed for Config delivery (e.g. all member accounts)."
+  type        = list(string)
+  default     = []
 }
 
 variable "name_prefix" {

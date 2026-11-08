@@ -31,6 +31,20 @@ output "permission_sets" {
 }
 
 output "break_glass_permission_set_arn" {
-  description = "BreakGlass permission set ARN (for CloudTrail alarms)."
+  description = "BreakGlass permission set ARN (for CloudTrail / EventBridge alarms)."
   value       = aws_ssoadmin_permission_set.break_glass.arn
+}
+
+output "break_glass_permission_set_name" {
+  value = aws_ssoadmin_permission_set.break_glass.name
+}
+
+output "break_glass_role_arn" {
+  description = "Stable IAM BreakGlass role ARN in the management account."
+  value       = aws_iam_role.break_glass.arn
+}
+
+output "break_glass_allowed_principal_arns" {
+  description = "Principals allowed to delete log-archive objects: IAM BreakGlass role and SSO BreakGlass role pattern. Pass to logging."
+  value       = local.break_glass_allowed_principal_arns
 }

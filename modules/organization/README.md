@@ -3,6 +3,10 @@
 Creates member accounts from the client account list and attaches the member
 deny SCP to each OU used by that list.
 
+- Manages the existing organization resource: enables `SERVICE_CONTROL_POLICY`
+  and trusted access for CloudTrail, Config, GuardDuty, and RAM (configurable).
+- First apply against an existing org: `terraform import
+  'module.organization.aws_organizations_organization.this' <org-id>`.
 - Exactly one `log-archive` and one `security` (enforced by variable validation).
 - Zero or more `workload` accounts; optional `network` account.
 - Management account is not created here.

@@ -110,6 +110,7 @@ resource "aws_ec2_transit_gateway" "this" {
   description                     = "${var.name_prefix} shared TGW"
   default_route_table_association = "enable"
   default_route_table_propagation = "enable"
+  auto_accept_shared_attachments  = "enable"
   tags                            = merge(local.tags, { Name = "${var.name_prefix}-tgw" })
 }
 
@@ -120,6 +121,15 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "egress" {
   transit_gateway_id = aws_ec2_transit_gateway.this.id
   vpc_id             = aws_vpc.egress.id
   tags               = local.tags
+}
+
+# Spoke → internet via the egress VPC attachment (single NAT in one AZ — accepted cost SPOF).
+resource "aws_ec2_transit_gateway_route" "default_egress" {
+  provider = aws.network
+
+  destination_cidr_block         = "0.0.0.0/0"
+  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.egress.id
+  transit_gateway_route_table_id = aws_ec2_transit_gateway.this.association_default_route_table_id
 }
 
 resource "aws_ram_resource_share" "tgw" {

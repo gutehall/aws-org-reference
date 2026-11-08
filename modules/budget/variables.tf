@@ -19,6 +19,11 @@ variable "budget_name" {
   default = "aws-org-reference-monthly"
 }
 
+variable "time_period_start" {
+  description = "Budget start (AWS Budgets format YYYY-MM-DD_HH:MM). Defaults to the first of the current UTC month at apply time via the stack."
+  type        = string
+}
+
 variable "tags" {
   type    = map(string)
   default = {}

@@ -11,8 +11,19 @@ variable "management_account_id" {
   type = string
 }
 
-variable "break_glass_role_arn" {
-  type = string
+variable "break_glass_allowed_principal_arns" {
+  description = "From identity.break_glass_allowed_principal_arns."
+  type        = list(string)
+}
+
+variable "flow_log_source_account_ids" {
+  type    = list(string)
+  default = []
+}
+
+variable "config_source_account_ids" {
+  type    = list(string)
+  default = []
 }
 
 variable "name_prefix" {
