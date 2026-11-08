@@ -1,9 +1,5 @@
 # aws-org-reference
 
-**Status:** **v0.1.0** private alpha reference. Not a Control Tower replacement.
-End-to-end apply is not yet proven in a throwaway org — see
-[`docs/dry-run.md`](docs/dry-run.md).
-
 Baseline Terraform you apply to land a client AWS organization from a private
 tfvars list. For AWS consultants applying into a client's **existing**
 management account.
